@@ -8,6 +8,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: nerootxon
     volumes:
       - mongo-data:/data/db
+    container_name: mongo-db
+
   mongo-express:
     image: mongo-express
     restart: always
@@ -18,6 +20,31 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: nerootxon
       ME_CONFIG_MONGODB_URL: mongodb://root:nerootxon@mongo:27017/
       ME_CONFIG_BASICAUTH: false
+    container_name: mongo-test
+
+  auth:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    container_name: auth
+
+  event:
+    build:
+      context: ./event
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    container_name: event
+
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    container_name: gateway
 
 volumes:
   mongo-data:
