@@ -1,11 +1,9 @@
-import { Controller, Get, Req } from '@nestjs/common';
-import { Request } from 'express';
+import { Controller, Get, HttpException, HttpStatus } from '@nestjs/common';
 
 @Controller('users')
 export class UserController {
   @Get()
-  findAll(@Req() request: Request): any[] {
-    console.log(request);
-    return [{ test: true }];
+  findAll() {
+    throw new HttpException('Not Implemented', HttpStatus.NOT_IMPLEMENTED);
   }
 }
