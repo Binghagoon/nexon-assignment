@@ -5,6 +5,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: nerootxon
+    ports:
+      - 27017:27017
     volumes:
       - mongo-data-test:/data/db
     container_name: mongo-db
