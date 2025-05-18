@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserApi, UserLogin } from './schema';
@@ -45,14 +49,12 @@ export class UserService {
     return this.toUserApi(createdUser);
   }
 
-  async login({
-    password,
-    username,
-  }: UserLogin): Promise<UserApi | 'User not Found' | 'Password incorrect'> {
+  async login({ password, username }: UserLogin): Promise<UserApi> {
     const user = await this.userModel.findOne({ username }).exec();
-    if (!user) return 'User not Found';
+    if (!user) throw new NotFoundException('User not found');
     const isPasswordCorrect = await this.checkIsPasswordCorrect(password, user);
-    if (!isPasswordCorrect) return 'Password incorrect';
+    if (!isPasswordCorrect)
+      throw new UnauthorizedException('Password Incorrect');
     return this.toUserApi(user);
   }
   async findAll(): Promise<UserApi[]> {
