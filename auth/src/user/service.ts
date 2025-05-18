@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User, UserApi, UserLogin } from './schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { genSalt, hash } from 'bcrypt';
@@ -17,8 +17,14 @@ export class UserService {
     return savedPassword === hashedPassword;
   }
 
-  private toUserApi({ email, role, username }: User): UserApi {
+  private toUserApi({
+    email,
+    role,
+    username,
+    _id,
+  }: User & { _id: Types.ObjectId }): UserApi {
     return {
+      id: _id.toString(),
       email,
       role,
       username,

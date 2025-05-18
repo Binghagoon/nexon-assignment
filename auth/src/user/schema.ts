@@ -29,6 +29,7 @@ export interface User {
 }
 
 export interface UserApi extends Omit<User, 'password' | 'salt'> {
+  id: string;
   password?: never;
   salt?: never;
 }
