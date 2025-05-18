@@ -8,6 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserApi, UserLogin } from './users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { genSalt, hash } from 'bcrypt';
 
 @Injectable()
@@ -20,6 +21,15 @@ export class UserService {
   ): Promise<boolean> {
     const hashedPassword = await hash(password, salt);
     return savedPassword === hashedPassword;
+  }
+
+  private async genPasswordAndSalt(password: string): Promise<{
+    password: string;
+    salt: string;
+  }> {
+    const salt = await genSalt();
+    const hashedPassword = await hash(password, salt);
+    return { password: hashedPassword, salt };
   }
 
   private toUserApi({
@@ -41,8 +51,9 @@ export class UserService {
     const conflictUsers = await this.userModel.find({ username }).exec();
     if (conflictUsers.length !== 0)
       throw new ConflictException('Username is conflict, use another username');
-    const salt = await genSalt();
-    const hashedPassword = await hash(password, salt);
+    const { password: hashedPassword, salt } = await this.genPasswordAndSalt(
+      password
+    );
     const user = new this.userModel({
       email,
       username,
@@ -69,5 +80,27 @@ export class UserService {
     const user = await this.userModel.findById(id).exec();
     if (!user) throw new NotFoundException(`User with id "${id}" not found`);
     return this.toUserApi(user);
+  }
+
+  async updateById(
+    id: string,
+    { email, password, role }: UpdateUserDto
+  ): Promise<UserApi> {
+    const { password: hashedPassword, salt } = password
+      ? await this.genPasswordAndSalt(password)
+      : { password: undefined, salt: undefined };
+    const user = await this.userModel
+      .findByIdAndUpdate(
+        id,
+        { email, role, password: hashedPassword, salt },
+        { new: true }
+      )
+      .exec();
+    if (!user) throw new NotFoundException(`User with id "${id}" not found`);
+    return this.toUserApi(user);
+  }
+  async deleteById(id: string) {
+    const user = await this.userModel.findByIdAndDelete(id).exec();
+    if (!user) throw new NotFoundException(`User with id "${id}" not found`);
   }
 }
