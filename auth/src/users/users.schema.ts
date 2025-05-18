@@ -1,6 +1,6 @@
 import { Schema } from 'mongoose';
 
-export enum UserType {
+export enum UserRole {
   USER = 'USER',
   OPERATOR = 'OPERATOR',
   AUDITOR = 'AUDITOR',
@@ -14,9 +14,9 @@ export const UserSchema = new Schema({
   salt: { type: String, required: true },
   role: {
     type: String,
-    enum: Object.values(UserType),
+    enum: Object.values(UserRole),
     required: true,
-    default: UserType.USER,
+    default: UserRole.USER,
   },
 });
 
@@ -25,7 +25,7 @@ export interface User {
   username: string;
   password: string;
   salt: string;
-  role: UserType;
+  role: UserRole;
 }
 
 export interface UserApi extends Omit<User, 'password' | 'salt'> {
