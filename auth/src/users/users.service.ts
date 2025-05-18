@@ -49,7 +49,7 @@ export class UserService {
     return this.toUserApi(createdUser);
   }
 
-  async login({ password, username }: UserLogin): Promise<UserApi> {
+  async validateUser({ password, username }: UserLogin): Promise<UserApi> {
     const user = await this.userModel.findOne({ username }).exec();
     if (!user) throw new NotFoundException('User not found');
     const isPasswordCorrect = await this.checkIsPasswordCorrect(password, user);
