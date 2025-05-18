@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -37,6 +38,9 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto): Promise<UserApi> {
     const { email, password, username } = createUserDto;
+    const conflictUsers = await this.userModel.find({ username }).exec();
+    if (conflictUsers.length !== 0)
+      throw new ConflictException('Username is conflict, use another username');
     const salt = await genSalt();
     const hashedPassword = await hash(password, salt);
     const user = new this.userModel({
@@ -60,5 +64,10 @@ export class UserService {
   async findAll(): Promise<UserApi[]> {
     const users = await this.userModel.find();
     return users.map(this.toUserApi);
+  }
+  async findById(id: string): Promise<UserApi> {
+    const user = await this.userModel.findById(id).exec();
+    if (!user) throw new NotFoundException(`User with id "${id}" not found`);
+    return this.toUserApi(user);
   }
 }

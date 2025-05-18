@@ -2,9 +2,9 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
+  Param,
   Post,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserApi } from './users.schema';
@@ -15,12 +15,19 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  async create(@Body() createUserDto: CreateUserDto): Promise<UserApi> {
+  async create(
+    @Body(new ValidationPipe()) createUserDto: CreateUserDto
+  ): Promise<UserApi> {
     return this.userService.create(createUserDto);
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<UserApi[]> {
     return this.userService.findAll();
+  }
+
+  @Get(':id')
+  findById(@Param('id') id: string): Promise<UserApi> {
+    return this.userService.findById(id);
   }
 }
