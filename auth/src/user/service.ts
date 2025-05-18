@@ -42,11 +42,15 @@ export class UserService {
   async login({
     password,
     username,
-  }: UserLogin): Promise<User | 'User not Found' | 'Password incorrect'> {
+  }: UserLogin): Promise<UserApi | 'User not Found' | 'Password incorrect'> {
     const user = await this.userModel.findOne({ username }).exec();
     if (!user) return 'User not Found';
     const isPasswordCorrect = await this.checkIsPasswordCorrect(password, user);
     if (!isPasswordCorrect) return 'Password incorrect';
-    return user;
+    return this.toUserApi(user);
+  }
+  async findAll(): Promise<UserApi[]> {
+    const users = await this.userModel.find();
+    return users.map(this.toUserApi);
   }
 }

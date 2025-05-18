@@ -28,6 +28,9 @@ export interface User {
   role: UserType;
 }
 
-export interface UserApi extends Omit<User, 'password' | 'salt'> {}
+export interface UserApi extends Omit<User, 'password' | 'salt'> {
+  password?: never;
+  salt?: never;
+}
 
 export interface UserLogin extends Pick<User, 'username' | 'password'> {}
