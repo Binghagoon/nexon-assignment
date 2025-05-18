@@ -7,8 +7,8 @@ import {
   Post,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserApi } from './schema';
-import { UserService } from './service';
+import { UserApi } from './users.schema';
+import { UserService } from './users.service';
 
 @Controller('users')
 export class UserController {
