@@ -1,6 +1,4 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { UserService } from 'src/user/service';
 import { AuthService } from './service';
 
 @Controller('auth')
