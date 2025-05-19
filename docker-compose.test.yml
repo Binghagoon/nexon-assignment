@@ -28,7 +28,7 @@ services:
       context: ./auth
       dockerfile: Dockerfile
     ports:
-      - 3000:3000
+      - 4000:3000
     environment:
       MONGO_URI: mongodb://root:nerootxon@mongo:27017/
       JWT_SECRET: asdfasdf
