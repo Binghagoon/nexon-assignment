@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/users/users.service';
 
@@ -20,5 +24,29 @@ export class AuthService {
       accessToken,
       user: { id, username, role },
     };
+  }
+
+  private async decodeToken(token: string) {
+    try {
+      const value: {
+        exp: number;
+        iat: number;
+        role: string;
+        sub: string;
+        username: string;
+      } = await this.jwtService.verifyAsync(token);
+      return value;
+    } catch (error) {
+      if (error.name === 'TokenExpiredError')
+        throw new UnauthorizedException('Token expired');
+      else if (error.name === 'JsonWebTokenError')
+        throw new UnauthorizedException('Invalid token');
+      else throw new BadRequestException('Token verification failed');
+    }
+  }
+  async verifyToken(token: string) {
+    const payload = await this.decodeToken(token);
+    const user = await this.userService.findById(payload.sub);
+    return user;
   }
 }

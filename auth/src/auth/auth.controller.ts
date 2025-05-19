@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -16,5 +16,14 @@ export class AuthController {
       accessToken,
       user,
     };
+  }
+
+  @Post('verify')
+  async verify(@Body() body: { accessToken?: string }) {
+    const { accessToken } = body ?? {};
+    if (!accessToken) throw new UnauthorizedException('Token not provided');
+
+    const user = await this.authService.verifyToken(accessToken);
+    return { user };
   }
 }
