@@ -1,5 +1,4 @@
 services:
-
   mongo:
     image: mongo
     restart: always
@@ -27,7 +26,7 @@ services:
       context: ./auth
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - 3000:3000
     container_name: auth
 
   event:
@@ -35,7 +34,7 @@ services:
       context: ./event
       dockerfile: Dockerfile
     ports:
-      - "3001:3001"
+      - 3001:3001
     container_name: event
 
   gateway:
@@ -43,7 +42,7 @@ services:
       context: ./gateway
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - 80:80
     container_name: gateway
 
 volumes:

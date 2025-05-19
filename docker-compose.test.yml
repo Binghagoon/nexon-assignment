@@ -23,5 +23,16 @@ services:
       ME_CONFIG_BASICAUTH: false
     container_name: mongo-test
 
+  auth:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      MONGO_URI: mongodb://root:nerootxon@mongo:27017/
+      JWT_SECRET: asdfasdf
+    container_name: auth-test
+
 volumes:
   mongo-data-test:
